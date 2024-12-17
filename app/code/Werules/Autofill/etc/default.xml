@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config/etc/config.xsd">
+    <default>
+        <werules_autofill>
+            <general>
+                <enabled>1</enabled>
+                <system_message><![CDATA[You are an expert product description writer. Create engaging and concise product descriptions. Do not include prices in the description.]]></system_message>
+            </general>
+        </werules_autofill>
+    </default>
+</config>

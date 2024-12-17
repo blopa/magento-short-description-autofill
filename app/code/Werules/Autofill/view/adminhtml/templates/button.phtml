@@ -1,0 +1,87 @@
+<?php
+    /** @var $block \Werules\Autofill\Block\Adminhtml\AutofillButton */
+    $ajaxUrl = $block->getUrl('werules_autofill/autofill/generate');
+    $productId = $block->getRequest()->getParam('id');
+
+    // Check configuration values
+    $autofillEnabled = $block->isAutofillEnabled();
+    $apiKey = $block->getApiKey();
+
+    // Show the button only if the feature is enabled and an API key is configured
+    if ($autofillEnabled && $apiKey):
+?>
+    <div style="margin-top: 10px; display: none; text-align: center;" id="werules-autofill-wrapper">
+        <button id="werules-autofill-button" type="button" class="action-primary" onclick="fetchAutofillData()">Autofill Short Description</button>
+    </div>
+    <script>
+        require(['jquery', 'mage/adminhtml/form'], function ($) {
+            window.fetchAutofillData = function () {
+                var productId = '<?= $productId ?>';
+                var productName = document.querySelector('[name="product[name]"]').value || 'N/A';
+                var productPrice = document.querySelector('[name="product[price]"]').value || 'N/A';
+                var shortDescription = document.getElementById('product_form_short_description');
+                var productCategories = [];
+
+                // Extract selected categories from multiselect DOM
+                document.querySelectorAll('.admin__action-multiselect-crumb span[data-bind="text: label"]').forEach(function (category) {
+                    productCategories.push(category.textContent.trim());
+                });
+
+                // Prepare data payload
+                var requestData = {
+                    product_id: productId || null,
+                    product_name: productName,
+                    product_price: productPrice,
+                    product_categories: productCategories.join(', '),
+                    short_description: shortDescription.value || '',
+                };
+
+                $.ajax({
+                    url: '<?= $ajaxUrl ?>',
+                    type: 'POST',
+                    data: requestData,
+                    showLoader: true,
+                    success: function (response) {
+                        if (response.short_description) {
+                            shortDescription.value = response.short_description;
+                        } else {
+                            alert('Failed to generate description. Please try again.');
+                        }
+                    },
+                    error: function (e) {
+                        alert('An error occurred while generating the description.');
+                        console.error(e);
+                    }
+                });
+            };
+        });
+
+        require(['jquery', 'domReady!'], function($) {
+            const interval = setInterval(() => {
+                const textarea = document.getElementById('product_form_short_description');
+                // data-state-collapsible="closed"
+
+                if (textarea) {
+                    const collapsibleDiv = textarea.closest('fieldset.admin__field');
+                    const autofillWrapper = document.getElementById('werules-autofill-wrapper');
+
+                    if (collapsibleDiv && autofillWrapper) {
+                        collapsibleDiv.append(autofillWrapper);
+                        autofillWrapper.style.display = 'block';
+                        clearInterval(interval);
+                    }
+                } else {
+                    const content = document.querySelector('[data-index="content"]');
+                    if (content) {
+                        const fieldSet = content.getElementsByClassName('fieldset-wrapper-title');
+                        if (fieldSet && fieldSet[0]) {
+                            if (fieldSet[0].getAttribute('data-state-collapsible') === 'closed') {
+                                fieldSet[0].click();
+                            }
+                        }
+                    }
+                }
+            }, 500);
+        });
+    </script>
+<?php endif; ?>
