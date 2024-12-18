@@ -83,11 +83,11 @@ Follow these steps to install the extension via Composer:
 
 1. **Admin Configuration**:
 
-   ![Admin Configuration](https://via.placeholder.com/600x300?text=Admin+Configuration+Screenshot)
+   ![Admin Configuration](https://raw.githubusercontent.com/blopa/magento-short-description-autofill/refs/heads/main/screenshots/screenshot-1.png)
 
 2. **Autofill Button on Product Edit Page**:
 
-   ![Product Edit Page](https://via.placeholder.com/600x300?text=Autofill+Button+Screenshot)
+   ![Product Edit Page](https://raw.githubusercontent.com/blopa/magento-short-description-autofill/refs/heads/main/screenshots/screenshot-2.png)
 
 ---
 
