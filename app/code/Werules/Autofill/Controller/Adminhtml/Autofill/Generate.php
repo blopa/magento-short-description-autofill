@@ -79,14 +79,17 @@ class Generate extends Action implements HttpPostActionInterface
         $productPrice = $requestData['product_price'] ?? number_format($product->getPrice(), 2);
         $productCategories = $requestData['product_categories'] ?? implode(', ', $this->getCategoryNames($product));
         $shortDescription = $requestData['short_description'] ?? $product->getShortDescription() ?: 'N/A';
+        $language = $requestData['language'] ?? 'en';
+        $languageMessage = "The description should be written in the following language: $language.";
 
         // Prepare Gemini prompt
         $prompt = sprintf(
-            "Product Information:\nName: %s\nCurrent Short Description: %s\nCategory: %s\nPrice: %s\n\nPlease generate a concise and engaging short product description based on the above details.",
+            "Product Information:\nName: %s\nCurrent Short Description: %s\nCategory: %s\nPrice: %s\n%s\n\nPlease generate a concise and engaging short product description.",
             $productName,
             $shortDescription,
             $productCategories,
-            $productPrice
+            $productPrice,
+            $languageMessage
         );
 
         $ch = curl_init('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' . $apiKey);
@@ -133,14 +136,17 @@ class Generate extends Action implements HttpPostActionInterface
         $productPrice = $requestData['product_price'] ?? number_format($product->getPrice(), 2);
         $productCategories = $requestData['product_categories'] ?? implode(', ', $this->getCategoryNames($product));
         $shortDescription = $requestData['short_description'] ?? $product->getShortDescription() ?: 'N/A';
+        $language = $requestData['language'] ?? 'en';
+        $languageMessage = "The description should be written in the following language: $language.";
 
         // Prepare OpenAI prompt
         $prompt = sprintf(
-            "Product Information:\nName: %s\nCurrent Short Description: %s\nCategory: %s\nPrice: %s\n\nPlease generate a concise and engaging short product description based on the above details.",
+            "Product Information:\nName: %s\nCurrent Short Description: %s\nCategory: %s\nPrice: %s\n%s\n\nPlease generate a concise and engaging short product description.",
             $productName,
             $shortDescription,
             $productCategories,
-            $productPrice
+            $productPrice,
+            $languageMessage
         );
 
         $ch = curl_init('https://api.openai.com/v1/chat/completions');
