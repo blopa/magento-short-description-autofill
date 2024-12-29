@@ -36,13 +36,16 @@ if ($autofillEnabled && $apiKey):
     </div>
     <script>
         require(['jquery', 'mage/adminhtml/form'], function ($) {
-            window.fetchAutofillData = function () {
-                var productId = '<?= $productId ?>';
-                var productName = document.querySelector('[name="product[name]"]')?.value || 'N/A';
-                var productPrice = document.querySelector('[name="product[price]"]')?.value || 'N/A';
-                var shortDescription = document.getElementById('product_form_short_description');
-                var language = document.getElementById('language-select')?.value || '<?= $languages[0] ?? 'en-US' ?>';
-                var productCategories = [];
+            window.fetchAutofillData = function (descriptionOnly = true) {
+                const productId = '<?= $productId ?>';
+                const productName = document.querySelector('[name="product[name]"]')?.value || 'N/A';
+                const productPrice = document.querySelector('[name="product[price]"]')?.value || 'N/A';
+                const shortDescription = document.getElementById('product_form_short_description');
+                const metaTitleInput = document.querySelector('[name="product[meta_title]"]');
+                const metaKeywordInput = document.querySelector('[name="product[meta_keyword]"]');
+                const metaDescriptionInput = document.querySelector('[name="product[meta_description]"]');
+                const language = document.getElementById('language-select')?.value || '<?= $languages[0] ?? 'en-US' ?>';
+                const productCategories = [];
 
                 // Extract selected categories from multiselect DOM
                 document.querySelectorAll('.admin__action-multiselect-crumb span[data-bind="text: label"]').forEach(function (category) {
@@ -50,7 +53,7 @@ if ($autofillEnabled && $apiKey):
                 });
 
                 // Prepare data payload
-                var requestData = {
+                const requestData = {
                     product_id: productId || null,
                     product_name: productName,
                     product_price: productPrice,
@@ -59,22 +62,89 @@ if ($autofillEnabled && $apiKey):
                     language: language,
                 };
 
+                function unescapeString(str) {
+                    const parsedString = str.replace(/\\(.)/g, (_, char) => {
+                        switch (char) {
+                            case 'n':
+                                return '\n';
+                            case 't':
+                                return '\t';
+                            case 'r':
+                                return '\r';
+                            case '"':
+                                return '"';
+                            case "'":
+                                return "'";
+                            case '\\':
+                                return '\\';
+                            default:
+                                return char;
+                        }
+                    });
+
+                    return parsedString.replace(/^"|"$/g, '');
+                }
+
                 $.ajax({
                     url: '<?= $ajaxUrl ?>',
                     type: 'POST',
                     data: requestData,
                     showLoader: true,
                     success: function (response) {
+                        if (!descriptionOnly) {
+                            if (response.meta_title || response.meta_keywords || response.meta_description) {
+                                if (metaTitleInput && response.meta_title) {
+                                    try {
+                                        metaTitleInput.value = unescapeString(response.meta_title);
+                                    } catch (e) {
+                                        metaTitleInput.value = response.meta_title;
+                                    }
+                                }
+
+                                if (metaKeywordInput && response.meta_keywords) {
+                                    try {
+                                        metaKeywordInput.value = unescapeString(response.meta_keywords);
+                                    } catch (e) {
+                                        metaKeywordInput.value = response.meta_keywords;
+                                    }
+                                }
+
+                                if (metaDescriptionInput && response.meta_description) {
+                                    try {
+                                        metaDescriptionInput.value = unescapeString(response.meta_description);
+                                    } catch (e) {
+                                        metaDescriptionInput.value = response.meta_description;
+                                    }
+                                }
+
+                                // Trigger KnockoutJS event to notify Magento of the change
+                                require(['mage/utils/wrapper'], function () {
+                                    const $metaTitle = $(metaTitleInput);
+                                    $metaTitle.trigger('change');
+
+                                    const $metaKeywords = $(metaKeywordInput);
+                                    $metaKeywords.trigger('change');
+
+                                    const $metaDescription = $(metaDescriptionInput);
+                                    $metaDescription.trigger('change');
+                                });
+                            }
+                        }
+
                         if (response.short_description) {
-                            shortDescription.value = response.short_description;
+                            if (shortDescription && response.short_description) {
+                                try {
+                                    shortDescription.value = unescapeString(response.short_description);
+                                } catch (e) {
+                                    shortDescription.value = response.short_description;
+                                }
+                            }
 
                             // Trigger KnockoutJS event to notify Magento of the change
                             require(['mage/utils/wrapper'], function () {
-                                var $textarea = $(shortDescription);
+                                const $textarea = $(shortDescription);
                                 $textarea.trigger('change');
                             });
-                        } else {
-                            alert('Failed to generate description. Please try again.');
                         }
                     },
                     error: function (e) {
@@ -86,7 +156,7 @@ if ($autofillEnabled && $apiKey):
         });
 
         require(['jquery', 'domReady!'], function($) {
-            const interval = setInterval(() => {
+            const productContentInterval = setInterval(() => {
                 const textarea = document.getElementById('product_form_short_description');
 
                 if (textarea) {
@@ -96,10 +166,30 @@ if ($autofillEnabled && $apiKey):
                     if (collapsibleDiv && autofillWrapper) {
                         collapsibleDiv.append(autofillWrapper);
                         autofillWrapper.style.opacity = '1';
-                        clearInterval(interval);
+                        clearInterval(productContentInterval);
                     }
                 } else {
                     const content = document.querySelector('[data-index="content"]');
+                    if (content) {
+                        const fieldSet = content.getElementsByClassName('fieldset-wrapper-title');
+                        if (fieldSet && fieldSet[0]) {
+                            if (fieldSet[0].getAttribute('data-state-collapsible') === 'closed') {
+                                fieldSet[0].click();
+                            }
+                        }
+                    }
+                }
+            }, 500);
+
+            const productMetaInterval = setInterval(() => {
+                const metaTitleInput = document.querySelector('[name="product[meta_title]"]');
+                const metaKeywordInput = document.querySelector('[name="product[meta_keyword]"]');
+                const metaDescriptionInput = document.querySelector('[name="product[meta_description]"]');
+
+                if (metaTitleInput || metaKeywordInput || metaDescriptionInput) {
+                    clearInterval(productMetaInterval);
+                } else {
+                    const content = document.querySelector('[data-index="search-engine-optimization"]');
                     if (content) {
                         const fieldSet = content.getElementsByClassName('fieldset-wrapper-title');
                         if (fieldSet && fieldSet[0]) {

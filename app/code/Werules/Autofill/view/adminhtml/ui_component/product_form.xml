@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="buttons" xsi:type="array">
+            <item name="werules_custom_button" xsi:type="string">Werules\Autofill\Block\Adminhtml\Product\Edit\Button\AutofillButton</item>
+        </item>
+    </argument>
+</form>
