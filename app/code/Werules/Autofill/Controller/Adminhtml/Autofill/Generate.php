@@ -86,7 +86,7 @@ class Generate extends Action implements HttpPostActionInterface
 
         // Prepare Gemini prompt
         $prompt = sprintf(
-            "Product Information:\nName: %s\nCurrent Short Description: %s\nCategory: %s\nPrice: %s\nBrand: %s\n%s\n\nPlease generate SEO metadata including meta_title, meta_keywords, and meta_description along with a concise product description.",
+            "Product Information:\nName: %s\nDetails about the product: %s\nCategory: %s\nPrice: %s\nBrand: %s\n%s\n\nPlease generate SEO metadata including meta_title, meta_keywords, and meta_description along with a concise product description.",
             $productName,
             $shortDescription,
             $productCategories,
@@ -103,9 +103,9 @@ class Generate extends Action implements HttpPostActionInterface
                 'parameters' => [
                     'type' => 'object',
                     'properties' => [
-                        'description' => [
+                        'long_description' => [
                             'type' => 'string',
-                            'description' => 'The concise and engaging product description.'
+                            'description' => 'A concise and engaging complete description for the product.'
                         ],
                         'meta_title' => [
                             'type' => 'string',
@@ -120,7 +120,7 @@ class Generate extends Action implements HttpPostActionInterface
                             'description' => 'SEO-optimized meta short description for the product.'
                         ]
                     ],
-                    'required' => ['description', 'meta_title', 'meta_keywords', 'meta_description']
+                    'required' => ['long_description', 'meta_title', 'meta_keywords', 'meta_description']
                 ]
             ]
         ];
@@ -178,7 +178,7 @@ class Generate extends Action implements HttpPostActionInterface
         }
 
         return [
-            'short_description' => $generatedData['description'] ?? 'N/A',
+            'short_description' => $generatedData['long_description'] ?? 'N/A',
             'meta_title' => $generatedData['meta_title'] ?? 'N/A',
             'meta_keywords' => $generatedData['meta_keywords'] ?? 'N/A',
             'meta_description' => $generatedData['meta_description'] ?? 'N/A'
@@ -202,7 +202,7 @@ class Generate extends Action implements HttpPostActionInterface
 
         // Prepare OpenAI prompt
         $prompt = sprintf(
-            "Product Information:\nName: %s\nCurrent Short Description: %s\nCategory: %s\nPrice: %s\nBrand: %s\n%s\n\nPlease generate SEO metadata including meta_title, meta_keywords, and meta_description along with a concise product description.",
+            "Product Information:\nName: %s\nDetails about the product: %s\nCategory: %s\nPrice: %s\nBrand: %s\n%s\n\nPlease generate SEO metadata including meta_title, meta_keywords, and meta_description along with a concise product description.",
             $productName,
             $shortDescription,
             $productCategories,
@@ -217,9 +217,9 @@ class Generate extends Action implements HttpPostActionInterface
             'parameters' => [
                 'type' => 'object',
                 'properties' => [
-                    'description' => [
+                    'long_description' => [
                         'type' => 'string',
-                        'description' => 'The concise and engaging product description.'
+                        'description' => 'A concise and engaging complete description for the product.'
                     ],
                     'meta_title' => [
                         'type' => 'string',
@@ -234,7 +234,7 @@ class Generate extends Action implements HttpPostActionInterface
                         'description' => 'SEO-optimized meta short description for the product.'
                     ]
                 ],
-                'required' => ['description', 'meta_title', 'meta_keywords', 'meta_description']
+                'required' => ['long_description', 'meta_title', 'meta_keywords', 'meta_description']
             ]
         ];
 
@@ -298,7 +298,7 @@ class Generate extends Action implements HttpPostActionInterface
         }
 
         return [
-            'short_description' => $functionResponse['short_description'] ?? 'N/A',
+            'short_description' => $functionResponse['long_description'] ?? 'N/A',
             'meta_title' => $functionResponse['meta_title'] ?? 'N/A',
             'meta_keywords' => $functionResponse['meta_keywords'] ?? 'N/A',
             'meta_description' => $functionResponse['meta_description'] ?? 'N/A'
