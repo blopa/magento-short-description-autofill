@@ -80,16 +80,18 @@ class Generate extends Action implements HttpPostActionInterface
         $productPrice = $requestData['product_price'] ?? number_format($product->getPrice(), 2) ?: 'N/A';
         $productCategories = $requestData['product_categories'] ?? implode(', ', $this->getCategoryNames($product)) ?: 'N/A';
         $shortDescription = $requestData['short_description'] ?? $product->getShortDescription() ?: 'N/A';
+        $productBrand = $requestData['product_brand'] ?? $product->getAttributeText('manufacturer') ?: 'N/A';
         $language = $requestData['language'] ?? 'en';
         $languageMessage = "The description should be written in the following language: $language.";
 
         // Prepare Gemini prompt
         $prompt = sprintf(
-            "Product Information:\nName: %s\nCurrent Short Description: %s\nCategory: %s\nPrice: %s\n%s\n\nPlease generate SEO metadata including meta_title, meta_keywords, and meta_description along with a concise product description.",
+            "Product Information:\nName: %s\nCurrent Short Description: %s\nCategory: %s\nPrice: %s\nBrand: %s\n%s\n\nPlease generate SEO metadata including meta_title, meta_keywords, and meta_description along with a concise product description.",
             $productName,
             $shortDescription,
             $productCategories,
             $productPrice,
+            $productBrand,
             $languageMessage
         );
 
@@ -194,16 +196,18 @@ class Generate extends Action implements HttpPostActionInterface
         $productPrice = $requestData['product_price'] ?? number_format($product->getPrice(), 2) ?: 'N/A';
         $productCategories = $requestData['product_categories'] ?? implode(', ', $this->getCategoryNames($product)) ?: 'N/A';
         $shortDescription = $requestData['short_description'] ?? $product->getShortDescription() ?: 'N/A';
+        $productBrand = $requestData['product_brand'] ?? $product->getAttributeText('manufacturer') ?: 'N/A';
         $language = $requestData['language'] ?? 'en';
         $languageMessage = "The description should be written in the following language: $language.";
 
         // Prepare OpenAI prompt
         $prompt = sprintf(
-            "Product Information:\nName: %s\nCurrent Short Description: %s\nCategory: %s\nPrice: %s\n%s\n\nPlease generate SEO metadata including meta_title, meta_keywords, and meta_description along with a concise product description.",
+            "Product Information:\nName: %s\nCurrent Short Description: %s\nCategory: %s\nPrice: %s\nBrand: %s\n%s\n\nPlease generate SEO metadata including meta_title, meta_keywords, and meta_description along with a concise product description.",
             $productName,
             $shortDescription,
             $productCategories,
             $productPrice,
+            $productBrand,
             $languageMessage
         );
 

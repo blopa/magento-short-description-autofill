@@ -39,6 +39,8 @@ if ($autofillEnabled && $apiKey):
             window.fetchAutofillData = function (descriptionOnly = true) {
                 const productId = '<?= $productId ?>';
                 const productName = document.querySelector('[name="product[name]"]')?.value || 'N/A';
+                const productSelect = document.querySelector('[name="product[manufacturer]"]');
+                const productBrand = productSelect?.options[productSelect.selectedIndex]?.text || 'N/A';
                 const productPrice = document.querySelector('[name="product[price]"]')?.value || 'N/A';
                 const shortDescription = document.getElementById('product_form_short_description');
                 const metaTitleInput = document.querySelector('[name="product[meta_title]"]');
@@ -54,12 +56,13 @@ if ($autofillEnabled && $apiKey):
 
                 // Prepare data payload
                 const requestData = {
-                    product_id: productId || null,
+                    language: language,
                     product_name: productName,
+                    product_brand: productBrand,
                     product_price: productPrice,
+                    product_id: productId || null,
                     product_categories: productCategories.join(', '),
                     short_description: shortDescription.value || '',
-                    language: language,
                 };
 
                 function unescapeString(str) {
