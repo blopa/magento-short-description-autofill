@@ -32,11 +32,15 @@ if ($autofillEnabled && $apiKey):
                 </select>
             </label>
         <?php endif; ?>
-        <button id="werules-autofill-button" type="button" class="action-primary" onclick="fetchAutofillData()">Autofill Short Description</button>
+        <button id="werules-autofill-short-button" type="button" class="action-primary" onclick="autoFillShortDescription()">Autofill Short Description</button>
     </div>
     <script>
         require(['jquery', 'mage/adminhtml/form'], function ($) {
-            window.fetchAutofillData = function (descriptionOnly = true) {
+            window.autoFillShortDescription = function () {
+                const language = document.getElementById('language-select')?.value || '<?= $languages[0] ?? 'en-US' ?>';
+                fetchAutofillData(true, language);
+            };
+            window.fetchAutofillData = function (descriptionOnly = true, language = '<?= $languages[0] ?? 'en-US' ?>') {
                 const productId = '<?= $productId ?>';
                 const productName = document.querySelector('[name="product[name]"]')?.value || 'N/A';
                 const productSelect = document.querySelector('[name="product[manufacturer]"]');
@@ -46,7 +50,6 @@ if ($autofillEnabled && $apiKey):
                 const metaTitleInput = document.querySelector('[name="product[meta_title]"]');
                 const metaKeywordInput = document.querySelector('[name="product[meta_keyword]"]');
                 const metaDescriptionInput = document.querySelector('[name="product[meta_description]"]');
-                const language = document.getElementById('language-select')?.value || '<?= $languages[0] ?? 'en-US' ?>';
                 const productCategories = [];
 
                 // Extract selected categories from multiselect DOM
@@ -159,6 +162,22 @@ if ($autofillEnabled && $apiKey):
         });
 
         require(['jquery', 'domReady!'], function($) {
+            <?php if ($shouldShowLanguages): ?>
+            const autofillButton = document.getElementById('werules_custom_button-button');
+            autofillButton.classList.remove('primary');
+            autofillButton.classList.add('secondary');
+            autofillButton.setAttribute('onclick', "window.fetchAutofillData(false, '<?= $languages[0] ?? 'en-US' ?>')");
+
+            const dropdownButton = document.querySelector('[data-ui-id="werules-custom-button-button-dropdown"]');
+            if (dropdownButton) {
+                dropdownButton.classList.remove('primary');
+            }
+
+            // move the button to be the first child of the parent
+            const buttonWrapper = autofillButton.parentElement;
+            buttonWrapper.parentElement.insertBefore(buttonWrapper, buttonWrapper.parentElement.firstChild);
+            <?php endif; ?>
+
             const productContentInterval = setInterval(() => {
                 const textarea = document.getElementById('product_form_short_description');
 
