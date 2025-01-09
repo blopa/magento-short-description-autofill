@@ -1,5 +1,5 @@
 <?php
-namespace Werules\Autofill\Model\Config\Source;
+namespace Werules\GenerativeConfig\Model\Config\Source;
 
 use Magento\Framework\Data\OptionSourceInterface;
 

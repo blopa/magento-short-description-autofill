@@ -38,7 +38,7 @@ class AutofillButton extends Template
      */
     public function getApiKey()
     {
-        return $this->scopeConfig->getValue('werules_autofill/general/api_key');
+        return $this->scopeConfig->getValue('werules_generativeconfig/general/api_key');
     }
 
     /**

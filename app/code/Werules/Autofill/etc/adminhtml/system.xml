@@ -12,20 +12,6 @@
                     <label>Enable Autofill Feature</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <!-- API Provider Dropdown -->
-                <field id="api_provider" translate="label" type="select" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>AI Provider</label>
-                    <source_model>Werules\Autofill\Model\Config\Source\ApiProvider</source_model>
-                    <comment>Select the AI service to use for generating descriptions.</comment>
-                </field>
-                <!-- OpenAI API Key -->
-                <field id="api_key" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>OpenAI API Key</label>
-                </field>
-                <!-- Gemini API Key -->
-                <field id="gemini_api_key" translate="label" type="text" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Gemini API Key</label>
-                </field>
                 <!-- System Message -->
                 <field id="system_message" translate="label" type="textarea" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>System Message for LLM</label>

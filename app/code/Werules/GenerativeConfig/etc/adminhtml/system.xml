@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config/etc/system_file.xsd">
+    <system>
+        <section id="werules_generativeconfig" translate="label" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Werules GenerativeConfig</label>
+            <tab>general</tab>
+            <resource>Werules_GenerativeConfig::config</resource>
+            <group id="general" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General</label>
+                <!-- Enable/Disable Field -->
+                <field id="enabled" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable GenerativeConfig Feature</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <!-- API Provider Dropdown -->
+                <field id="api_provider" translate="label" type="select" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>AI Provider</label>
+                    <source_model>Werules\GenerativeConfig\Model\Config\Source\ApiProvider</source_model>
+                    <comment>Select the AI service to use for generation.</comment>
+                </field>
+                <!-- OpenAI API Key -->
+                <field id="api_key" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>OpenAI API Key</label>
+                </field>
+                <!-- Gemini API Key -->
+                <field id="gemini_api_key" translate="label" type="text" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Gemini API Key</label>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

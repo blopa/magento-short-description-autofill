@@ -39,7 +39,7 @@ class Generate extends Action implements HttpPostActionInterface
 
         // Check if the feature is enabled
         $autofillEnabled = $this->scopeConfig->getValue('werules_autofill/general/enabled');
-        $apiProvider = $this->scopeConfig->getValue('werules_autofill/general/api_provider');
+        $apiProvider = $this->scopeConfig->getValue('werules_generativeconfig/general/api_provider');
 
         if (!$autofillEnabled) {
             $this->logger->error('Autofill feature is disabled.');
@@ -47,9 +47,9 @@ class Generate extends Action implements HttpPostActionInterface
         }
 
         if ($apiProvider === 'openai') {
-            $apiKey = $this->scopeConfig->getValue('werules_autofill/general/api_key');
+            $apiKey = $this->scopeConfig->getValue('werules_generativeconfig/general/api_key');
         } elseif ($apiProvider === 'gemini') {
-            $apiKey = $this->scopeConfig->getValue('werules_autofill/general/gemini_api_key');
+            $apiKey = $this->scopeConfig->getValue('werules_generativeconfig/general/gemini_api_key');
         }
 
         if (!$apiKey) {
@@ -272,7 +272,7 @@ class Generate extends Action implements HttpPostActionInterface
         curl_close($ch);
 
         // Extract the tool_calls section from the response
-        $toolCalls = $decodedResponse['choices'][0]['message']['tool_calls'] ?? null;
+        $toolCalls = $decodedResponse['choices'] ?? [];
 
         if (!$toolCalls || !is_array($toolCalls)) {
             $this->logger->error('No tool calls received from OpenAI.');
@@ -284,8 +284,8 @@ class Generate extends Action implements HttpPostActionInterface
         // Find the relevant function call data
         $functionResponse = null;
         foreach ($toolCalls as $toolCall) {
-            if ($toolCall['function']['name'] === 'generate_product_metadata') {
-                $functionResponse = json_decode($toolCall['function']['arguments'], true);
+            if ($toolCall['message']['function_call']['name'] === 'generate_product_metadata') {
+                $functionResponse = json_decode($toolCall['message']['function_call']['arguments'], true);
                 break;
             }
         }
@@ -297,6 +297,7 @@ class Generate extends Action implements HttpPostActionInterface
             ];
         }
 
+        $this->logger->info('Got here 3');
         return [
             'short_description' => $functionResponse['long_description'] ?? 'N/A',
             'meta_title' => $functionResponse['meta_title'] ?? 'N/A',
